@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LevelActivity"
+    android:id="@+id/Level"
+    android:orientation="vertical"
+    android:background="@drawable/screenstyle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="100dp"
+            android:text="@string/back"
+            android:textSize="20dp"
+            android:layout_height="40dp"
+            android:onClick="onClick"
+            android:id="@+id/back"
+            android:textColor="#DCDCDC"
+            android:background="@drawable/backstyle"></Button>
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"></LinearLayout>
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="onClick"
+            android:id="@+id/infolvl"
+            android:background="@drawable/info"></Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"></LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="@string/choose_level"
+        android:textSize="30dp"
+        android:id="@+id/TextTime"
+        android:textColor="#DCDCDC"
+        android:background="@drawable/contur"></TextView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="90dp"
+            android:text="@string/level_1"
+            android:textSize="30dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/lvl_btn_1"
+            android:onClick="onClick"
+            android:textColor="#DCDCDC"
+            android:background="@drawable/startstyle"></Button>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"></LinearLayout>
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="90dp"
+            android:text="@string/level_2"
+            android:textSize="30dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/lvl_btn_2"
+            android:onClick="onClick"
+            android:textColor="#DCDCDC"
+            android:background="@drawable/startstyle"></Button>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"></LinearLayout>
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="90dp"
+            android:text="@string/level_3"
+            android:textSize="30dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/lvl_btn_3"
+            android:onClick="onClick"
+            android:textColor="#DCDCDC"
+            android:background="@drawable/startstyle"></Button>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"></LinearLayout>
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="90dp"
+            android:text="@string/level_4"
+            android:textSize="30dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/lvl_btn_4"
+            android:onClick="onClick"
+            android:textColor="#DCDCDC"
+            android:background="@drawable/startstyle"></Button>
+
+    </LinearLayout>
+
+</LinearLayout>

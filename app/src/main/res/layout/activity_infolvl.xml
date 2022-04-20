@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/screenstyle"
+    android:orientation="vertical"
+    tools:context=".InfolvlActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"></LinearLayout>
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:background="@drawable/backstyle"
+        android:onClick="onClick"
+        android:text="@string/back"
+        android:textColor="#DCDCDC"
+        android:textSize="20dp"></Button>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/contur"
+        android:orientation="vertical"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"></LinearLayout>
+
+        <com.prush.typedtextview.TypedTextView
+            android:id="@+id/textinfa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="fill_horizontal"
+            android:textColor="#DCDCDC"
+            android:textSize="30sp"
+            android:visibility="visible"
+            app:typed_text="@string/infolvl" />
+
+        <TextView
+            android:id="@+id/typedlvl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/infolvl"
+            android:textSize="30sp"
+            android:gravity="fill_horizontal"
+            android:textColor="#DCDCDC"></TextView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"></LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="350dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:background="@drawable/backstyle"
+            android:gravity="center">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/graph"
+                android:layout_width="322dp"
+                android:layout_height="200dp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

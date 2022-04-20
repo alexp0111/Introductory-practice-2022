@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:id="@+id/MainLayout"
+    android:background="@drawable/screenstyle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:id="@+id/info"
+            android:onClick="onClick"
+            android:background="@drawable/info"></Button>
+
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"></LinearLayout>
+
+         <Button
+             android:layout_width="100dp"
+             android:layout_height="40dp"
+             android:onClick="onClick"
+             android:background="@drawable/backstyle"
+             android:textColor="#DCDCDC"
+             android:textSize="20dp"
+             android:layout_weight="1"
+             android:gravity="center"
+             android:text="@string/sounds"
+             android:id="@+id/mute">
+         </Button>
+
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"></LinearLayout>
+
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:id="@+id/endmainactivity"
+            android:onClick="onClick"
+            android:background="@drawable/turn_off"></Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight="5">
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                android:background="@drawable/lamp"
+                android:transitionName="lampochka"
+                android:id="@+id/lamp"></ImageView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/start"
+                android:textColor="#DCDCDC"
+                android:textSize="30dp"
+                android:onClick="onClick"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:background="@drawable/startstyle"
+                android:text="@string/start"
+                android:gravity="center"
+                android:layout_gravity="center"></Button>
+
+            <LinearLayout
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"></LinearLayout>
+
+            <Button
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:onClick="onClick"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:background="@drawable/pedestal"
+                android:id="@+id/pedestal"
+                android:visibility="gone"></Button>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="10dp"></LinearLayout>
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:id="@+id/rate_layout">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="20dp"
+                    android:onClick="onClick"
+                    android:textColor="#DCDCDC"
+                    android:id="@+id/rate"></Button>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="5dp"></LinearLayout>
+
+            <Button
+                android:layout_width="150dp"
+                android:id="@+id/authorization1"
+                android:textSize="20dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:onClick="onClick"
+                android:textColor="#DCDCDC"
+                android:text="@string/sign_in"
+                android:background="@drawable/backstyle"
+                android:visibility="visible"></Button>
+
+            <TextView
+                android:id="@+id/texthi"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:textSize="17dp"
+                android:textColor="#DCDCDC"
+                android:gravity="center"
+                android:layout_gravity="center"></TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"></LinearLayout>
+
+        </LinearLayout>
+
+</LinearLayout>
