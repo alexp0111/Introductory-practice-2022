@@ -1,11 +1,13 @@
 package com.example.project;
 
+import static com.example.project.MainActivity.vlm;
+
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-// import android.database.SQLException; // DELETION
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -25,9 +27,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,12 +35,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 import smartdevelop.ir.eram.showcaseviewlib.GuideView;
 import smartdevelop.ir.eram.showcaseviewlib.config.DismissType;
 import smartdevelop.ir.eram.showcaseviewlib.config.Gravity;
-import smartdevelop.ir.eram.showcaseviewlib.listener.GuideListener;
-
-import static com.example.project.MainActivity.vlm;
+// import android.database.SQLException; // DELETION
 
 public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompleteListener {
 
@@ -107,12 +106,15 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
         //  SharedPreferences и в дальнейшем используются, подразумевая, что pref != null.
         //  Благодаря динамическому анализу удаётся получить соответствующую ошибку,
         //  при моделировании ситуации, когда файл был случайно удалён или утерян системой.
-        //
+        //A
         //  Вследствие данного анализа надлежит организовать проверку pref перед её использованием (строка 218)
         // Practice addition - dynamic analysis
         //
-        mEmailField = (EditText) findViewById(R.id.field_email);
-        mPasswordField = (EditText) findViewById(R.id.field_password);
+        mEmailField = findViewById(R.id.field_email);
+        mPasswordField = findViewById(R.id.field_password);
+        //
+        // !Проблема решена, исключен (EditText)!
+        //
         // Practice addition - static analysis
         //
         //  Среда разработки помечает строгую типизацию (EditText) серым цветом, тем самым
@@ -135,6 +137,7 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
         contentValues = new ContentValues();
         //
         listener = new SensorEventListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onSensorChanged(SensorEvent event) {
                 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -154,7 +157,6 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
                         lastUpdate = actualTime;
                         if (bul) {
                             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(500);
                             // Practice addition - dynamic analysis
                             //  В процессе тестирования на эмуляторах разного поколения, была
                             //  обнаружена ошибка, не обрабатываемая программным кодом. Если в
@@ -165,13 +167,18 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
                             //  Вследствие данного анализа надлежит организовать проверку
                             //  vibrator перед его использованием
                             // Practice addition - dynamic analysis
-                            if (vibrator != null)
+                            // Проверка на наличие у телефона вибромотора
+                            if (vibrator.hasVibrator()) {
                                 vibrator.vibrate(500);
+                            }
                             if (SQLdatabase != null) { // ADDITION
                                 Cursor cursor = SQLdatabase.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
 
                                 if (cursor.moveToFirst()) {
-                                    int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+                                    //int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+                                    //
+                                    //!idIndex был удален из-за его фиктивности!
+                                    //
                                     // Practice addition - static analysis
                                     //
                                     //  Среда разработки помечает переменную idIndex серым цветом
@@ -216,7 +223,10 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
         // Practice addition - static analysis
         //
         // OLD CODE: if (pref.getBoolean("is_start", false) != true) {
-        if (pref != null && pref.getBoolean("is_start", false) != true) {
+        if (pref != null && !pref.getBoolean("is_start", false)) {
+            //
+            //! Читаемость была улучшена!
+            //
             // Practice addition - static analysis
             //
             //  Среда разработки помечает констуркцию pref.getBoolean("is_start", false) != true
@@ -235,39 +245,31 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
                     .setTargetView(nickname)
                     .setContentTextSize(12)
                     .setTitleTextSize(14)
-                    .setGuideListener(new GuideListener() {
-                        @Override
-                        public void onDismiss(View view) {
-                            new GuideView.Builder(LogInActivity.this)
-                                    .setTitle(getString(R.string.st2))
-                                    .setContentText(getString(R.string.st2_txt))
+                    .setGuideListener(view -> new GuideView.Builder(LogInActivity.this)
+                            .setTitle(getString(R.string.st2))
+                            .setContentText(getString(R.string.st2_txt))
+                            .setGravity(Gravity.center)
+                            .setDismissType(DismissType.anywhere)
+                            .setTargetView(mEmailField)
+                            .setContentTextSize(12)
+                            .setTitleTextSize(14)
+                            .setGuideListener(view1 -> new GuideView.Builder(LogInActivity.this)
+                                    .setTitle(getString(R.string.st3))
+                                    .setContentText(getString(R.string.st3_txt))
                                     .setGravity(Gravity.center)
                                     .setDismissType(DismissType.anywhere)
-                                    .setTargetView(mEmailField)
+                                    .setTargetView(mPasswordField)
                                     .setContentTextSize(12)
                                     .setTitleTextSize(14)
-                                    .setGuideListener(new GuideListener() {
-                                        @Override
-                                        public void onDismiss(View view) {
-                                            new GuideView.Builder(LogInActivity.this)
-                                                    .setTitle(getString(R.string.st3))
-                                                    .setContentText(getString(R.string.st3_txt))
-                                                    .setGravity(Gravity.center)
-                                                    .setDismissType(DismissType.anywhere)
-                                                    .setTargetView(mPasswordField)
-                                                    .setContentTextSize(12)
-                                                    .setTitleTextSize(14)
-                                                    .build()
-                                                    .show();
-
-                                        }
-                                    })
                                     .build()
-                                    .show();
-                        }
-                    })
+                                    .show())
+                            .build()
+                            .show())
                     .build()
                     .show();
+            //
+            //! конструктор улучшен с помощью лямбды!
+            //
             // Practice addition - static analysis
             //
             //  (237, 249) Среда разработки помечает параметр объявления конструктора анонимного
@@ -279,7 +281,10 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
             //  в соответствии с требованиями системы.
             //
             // Practice addition - static analysis
-            pref.edit().putBoolean("is_start", true).commit();
+            pref.edit().putBoolean("is_start", true).apply();
+            //
+            // !Проблема решена, заменена commit() на apply()!
+            //
             // Practice addition - static analysis
             //
             //  (281) Среда разработки помечает конструкцию вызова метода на объекте класса
@@ -297,12 +302,12 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
         }
         //
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-            }
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
         };
+        //
+        //!Код оптимизирован лямбдой!
+        //
         // Practice addition - static analysis
         //
         //  (298 - 304) В данном блоке будут рассмотрены сразу две рекомендации инструмента
@@ -373,60 +378,55 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
     ///////////////////////////
 
     private void createAccount(String email, String password) {
-        if (!validateForm()) {
+        if (validateForm()) {
             return;
         }
         showProgressDialog();
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            // Practice addition - static analysis
-            //
-            //  Заменить анонимный класс лямбой.
-            //
-            // Practice addition - static analysis
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d("TAG", "oops");
-                    Toast.makeText(LogInActivity.this, R.string.madeacc, Toast.LENGTH_SHORT).show();
-                    //
-                    personemail = database.getReference(firebaseUser.getUid());
-                    //
-                    personemail.child("statistic").child("itscr").setValue(0);
-                    personemail.child("statistic").child("allscr").setValue(0);
-                    personemail.child("statistic").child("mm").setValue(0);
-                    //
-                    personemail.child("nick").setValue(nickname.getText().toString());
-                    personemail.child("championscore").setValue(0);
-                    //
-                    personemail.child("achieve").child("fool").setValue(0);
-                    personemail.child("achieve").child("fool_count").setValue(0);
-                    personemail.child("achieve").child("simple").setValue(0);
-                    personemail.child("achieve").child("simple_count").setValue(0);
-                    //
-                    //
-                    firebaseUser.sendEmailVerification()
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                // Practice addition - static analysis
-                                //
-                                //  Уже рассмотренная ситуация: Заменить анонимный класс лямбой.
-                                //
-                                // Practice addition - static analysis
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        z = 1;
-                                        Toast.makeText(LogInActivity.this, R.string.email, Toast.LENGTH_SHORT).show();
-                                        Log.d("TAG", "Email sent!");
-                                    }
-                                }
-                            });
-                    //
-                } else {
-                    Toast.makeText(LogInActivity.this, R.string.fail, Toast.LENGTH_SHORT).show();
-                    marker = 0;
-                }
-                hideProgressDialog();
+        // Practice addition - static analysis
+//
+//  Заменить анонимный класс лямбой.
+//
+// Practice addition - static analysis
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                Log.d("TAG", "oops");
+                Toast.makeText(LogInActivity.this, R.string.madeacc, Toast.LENGTH_SHORT).show();
+                //
+                personemail = database.getReference(firebaseUser.getUid());
+                //
+                personemail.child("statistic").child("itscr").setValue(0);
+                personemail.child("statistic").child("allscr").setValue(0);
+                personemail.child("statistic").child("mm").setValue(0);
+                //
+                personemail.child("nick").setValue(nickname.getText().toString());
+                personemail.child("championscore").setValue(0);
+                //
+                personemail.child("achieve").child("fool").setValue(0);
+                personemail.child("achieve").child("fool_count").setValue(0);
+                personemail.child("achieve").child("simple").setValue(0);
+                personemail.child("achieve").child("simple_count").setValue(0);
+                //
+                //!Код оптимизирован лямбдой!
+                //
+                // Practice addition - static analysis
+                //
+                //  Уже рассмотренная ситуация: Заменить анонимный класс лямбой.
+                //
+                // Practice addition - static analysis
+                firebaseUser.sendEmailVerification()
+                        .addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                z = 1;
+                                Toast.makeText(LogInActivity.this, R.string.email, Toast.LENGTH_SHORT).show();
+                                Log.d("TAG", "Email sent!");
+                            }
+                        });
+                //
+            } else {
+                Toast.makeText(LogInActivity.this, R.string.fail, Toast.LENGTH_SHORT).show();
+                marker = 0;
             }
+            hideProgressDialog();
         });
         // ADDITIONS
         if (nicks != null) {
@@ -443,167 +443,176 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
     ////////////////////////
 
     private void signIn(String email, String password) {
-        if (!validateForm()) {
+        if (validateForm()) {
             return;
         }
         showProgressDialog();
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            // Practice addition - static analysis
-            //
-            //  Уже рассмотренная ситуация: Заменить анонимный класс лямбой.
-            //
-            // Practice addition - static analysis
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    if (firebaseUser.isEmailVerified()) {
-                        Toast.makeText(LogInActivity.this, R.string.login, Toast.LENGTH_SHORT).show();
-                        //
-                        contentValues.put(DBHelper.KEY_EMAIL, email);
-                        contentValues.put(DBHelper.KEY_PASS, password);
-                        if (SQLdatabase != null)    // ADDITION
-                            SQLdatabase.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
-                        //
-                        z = 0;
-                    } else {
-                        Toast.makeText(LogInActivity.this, R.string.misna, Toast.LENGTH_SHORT).show();
-                        z = 1;
-                    }
+        //
+        //!Код оптимизирован лямбдой!
+        //
+        // Practice addition - static analysis
+        //
+        //  Уже рассмотренная ситуация: Заменить анонимный класс лямбой.
+        //
+        // Practice addition - static analysis
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                if (firebaseUser  != null && firebaseUser.isEmailVerified()) {
+                    Toast.makeText(LogInActivity.this, R.string.login, Toast.LENGTH_SHORT).show();
                     //
-                    id = firebaseUser.getUid();
-                    if (id.equals(" ")) {
-                        Toast.makeText(LogInActivity.this, "Error 404", Toast.LENGTH_SHORT).show();
-                        Log.d("TAG", "disconnect");
-                    } else {
-                        marker = 1;
-                    }
-                    personemail = database.getReference(firebaseUser.getUid());
-                    personemail.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // Practice addition - static analysis
-                            //
-                            //  Среда разработки помечает объекты dataSnapshot и error
-                            //  желтым цветом и представляет комментарий:
-                            //  Not annotated parameter overrides @NonNull parameter
-                            //  Проблема заключается в том, что метод onDataChange возвращает
-                            //  своим результатом иной метод, в параметре которого прописана
-                            //  аннотация @NonNull. В итоге возникает неточность, которая может
-                            //  быть исправленая засчёт указания аннтоации в параметрах данного
-                            //  метода.
-                            //
-                            //  Вследствие данного анализа провести аннотирование параметров
-                            //  dataSnapShot и error.
-                            //
-                            //
-                            // Practice addition - static analysis
-                            nickname.setText(dataSnapshot.child("nick").getValue(String.class));
-                            //
-                            //Users data
-                            //
-                            name = dataSnapshot.child("nick").getValue(String.class);
-                            ch_score = dataSnapshot.child("championscore").getValue(Integer.class);
-                            itscore = dataSnapshot.child("statistic").child("itscr").getValue(Integer.class);
-                            allscore = dataSnapshot.child("statistic").child("allscr").getValue(Integer.class);
+                    contentValues.put(DBHelper.KEY_EMAIL, email);
+                    contentValues.put(DBHelper.KEY_PASS, password);
+                    if (SQLdatabase != null)    // ADDITION
+                        SQLdatabase.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
+                    //
+                    z = 0;
+                } else {
+                    Toast.makeText(LogInActivity.this, R.string.misna, Toast.LENGTH_SHORT).show();
+                    z = 1;
+                }
+                //
+                id = firebaseUser.getUid();
+                if (id.equals(" ")) {
+                    Toast.makeText(LogInActivity.this, "Error 404", Toast.LENGTH_SHORT).show();
+                    Log.d("TAG", "disconnect");
+                } else {
+                    marker = 1;
+                }
+                personemail = database.getReference(firebaseUser.getUid());
+                personemail.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        // Practice addition - static analysis
+                        //
+                        //  Среда разработки помечает объекты dataSnapshot и error
+                        //  желтым цветом и представляет комментарий:
+                        //  Not annotated parameter overrides @NonNull parameter
+                        //  Проблема заключается в том, что метод onDataChange возвращает
+                        //  своим результатом иной метод, в параметре которого прописана
+                        //  аннотация @NonNull. В итоге возникает неточность, которая может
+                        //  быть исправленая засчёт указания аннтоации в параметрах данного
+                        //  метода.
+                        //
+                        //  Вследствие данного анализа провести аннотирование параметров
+                        //  dataSnapShot и error.
+                        //
+                        //
+                        // Practice addition - static analysis
+                        nickname.setText(dataSnapshot.child("nick").getValue(String.class));
+                        //
+                        //Users data
+                        //
+                        name = dataSnapshot.child("nick").getValue(String.class);
+                        ch_score = dataSnapshot.child("championscore").getValue(Integer.class);
+                        itscore = dataSnapshot.child("statistic").child("itscr").getValue(Integer.class);
+                        allscore = dataSnapshot.child("statistic").child("allscr").getValue(Integer.class);
+                        try {
                             mm = dataSnapshot.child("statistic").child("mm").getValue(Integer.class);
-                            fool = dataSnapshot.child("achieve").child("fool").getValue(Integer.class);
-                            fool_count = dataSnapshot.child("achieve").child("fool_count").getValue(Integer.class);
-                            simple = dataSnapshot.child("achieve").child("simple").getValue(Integer.class);
-                            simple_count = dataSnapshot.child("achieve").child("simple_count").getValue(Integer.class);
-                            // Practice addition - static analysis
-                            //
-                            //  Среда разработки помечает вызов методов на объекте dataSnapshot
-                            //  сообщая разработчику, что данная распаковка информации из базы
-                            //  данных может привести к ошибке NullPointerException.
-                            //
-                            //  Вследствие данного анализа обернуть потенциально опасный код в
-                            //  конструкцию try catch или провести ряд проверко перед их вызовом,
-                            //  чтобы не допустить ошибки работы приложения.
-                            //
-                            //
-                            // Practice addition - static analysis
+                        }
+                        catch(NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                        fool = dataSnapshot.child("achieve").child("fool").getValue(Integer.class);
+                        fool_count = dataSnapshot.child("achieve").child("fool_count").getValue(Integer.class);
+                        simple = dataSnapshot.child("achieve").child("simple").getValue(Integer.class);
+                        simple_count = dataSnapshot.child("achieve").child("simple_count").getValue(Integer.class);
+
+                        //
+                        //!Добавлена обработка исключений!
+                        //
+                        // Practice addition - static analysis
+                        //
+                        //  Среда разработки помечает вызов методов на объекте dataSnapshot
+                        //  сообщая разработчику, что данная распаковка информации из базы
+                        //  данных может привести к ошибке NullPointerException.
+                        //
+                        //  Вследствие данного анализа обернуть потенциально опасный код в
+                        //  конструкцию try catch или провести ряд проверко перед их вызовом,
+                        //  чтобы не допустить ошибки работы приложения.
+                        //
+                        //
+                        // Practice addition - static analysis
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                    }
+                });
+                if (champion1 != null)  //  ADDITION
+                    champion1.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            ch1_nick = dataSnapshot.child("maiil").getValue(String.class);
+                            id1 = dataSnapshot.child("id").getValue(String.class);
+                            ch1_scr = dataSnapshot.child("scorr").getValue(Integer.class);
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError error) {
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
                     });
-                    if (champion1 != null)  //  ADDITION
-                        champion1.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                ch1_nick = dataSnapshot.child("maiil").getValue(String.class);
-                                id1 = dataSnapshot.child("id").getValue(String.class);
-                                ch1_scr = dataSnapshot.child("scorr").getValue(Integer.class);
-                            }
+                if (champion2 != null)  //  ADDITION
+                    champion2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            ch2_nick = dataSnapshot.child("maiil").getValue(String.class);
+                            id2 = dataSnapshot.child("id").getValue(String.class);
+                            ch2_scr = dataSnapshot.child("scorr").getValue(Integer.class);
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
-                    if (champion2 != null)  //  ADDITION
-                        champion2.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                ch2_nick = dataSnapshot.child("maiil").getValue(String.class);
-                                id2 = dataSnapshot.child("id").getValue(String.class);
-                                ch2_scr = dataSnapshot.child("scorr").getValue(Integer.class);
-                            }
+                        }
+                    });
+                if (champion3 != null)  //  ADDITION
+                    champion3.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            ch3_nick = dataSnapshot.child("maiil").getValue(String.class);
+                            id3 = dataSnapshot.child("id").getValue(String.class);
+                            ch3_scr = dataSnapshot.child("scorr").getValue(Integer.class);
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
-                    if (champion3 != null)  //  ADDITION
-                        champion3.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                ch3_nick = dataSnapshot.child("maiil").getValue(String.class);
-                                id3 = dataSnapshot.child("id").getValue(String.class);
-                                ch3_scr = dataSnapshot.child("scorr").getValue(Integer.class);
-                            }
+                        }
+                    });
+                if (champion4 != null)  //  ADDITION
+                    champion4.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            ch4_nick = dataSnapshot.child("maiil").getValue(String.class);
+                            id4 = dataSnapshot.child("id").getValue(String.class);
+                            ch4_scr = dataSnapshot.child("scorr").getValue(Integer.class);
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
-                    if (champion4 != null)  //  ADDITION
-                        champion4.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                ch4_nick = dataSnapshot.child("maiil").getValue(String.class);
-                                id4 = dataSnapshot.child("id").getValue(String.class);
-                                ch4_scr = dataSnapshot.child("scorr").getValue(Integer.class);
-                            }
+                        }
+                    });
+                if (champion5 != null)  //  ADDITION
+                    champion5.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            ch5_nick = dataSnapshot.child("maiil").getValue(String.class);
+                            id5 = dataSnapshot.child("id").getValue(String.class);
+                            ch5_scr = dataSnapshot.child("scorr").getValue(Integer.class);
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
-                    if (champion5 != null)  //  ADDITION
-                        champion5.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                ch5_nick = dataSnapshot.child("maiil").getValue(String.class);
-                                id5 = dataSnapshot.child("id").getValue(String.class);
-                                ch5_scr = dataSnapshot.child("scorr").getValue(Integer.class);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                } else {
-                    Toast.makeText(LogInActivity.this, R.string.fail, Toast.LENGTH_SHORT).show();
-                    marker = 0;
-                }
-                hideProgressDialog();
+                        }
+                    });
+            } else {
+                Toast.makeText(LogInActivity.this, R.string.fail, Toast.LENGTH_SHORT).show();
+                marker = 0;
             }
+            hideProgressDialog();
         });
     }
 
@@ -641,7 +650,7 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
             mPasswordField.setError(null);
         }
         //
-        return valid;
+        return !valid;
     }
 
     @Override
@@ -710,7 +719,10 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
                     Log.d("TAG", "start");
                     for (int i = 1; i <= y; i++) {
                         if ((nickname.getText().toString()).equals(dataSnapshot.child(Integer.toString(i)).getValue(String.class))) {
-                            Log.d("TAG", dataSnapshot.child(Integer.toString(i)).getValue(String.class));
+                            Log.d("TAG", Objects.requireNonNull(dataSnapshot.child(Integer.toString(i)).getValue(String.class)));
+                            //
+                            //!добавлена оберткак Objects.requireNonNull!
+                            //
                             // Practice addition - static analysis
                             //
                             //  Среда разработки сообщает о возможном результате выполнения
@@ -767,6 +779,7 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
             if (sp != null)  //  ADDITION
                 sp.play(sound, vlm, vlm, 0, 0, 1);
         } else if (v.getId() == R.id.go_out) {
+            //  ADDITION
             if (z == 0) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -774,15 +787,17 @@ public class LogInActivity extends BaseActivity implements SoundPool.OnLoadCompl
                 overridePendingTransition(R.anim.nextback, R.anim.alpha);
                 final Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_go);
                 v.startAnimation(animation);
-                if (sp != null)  //  ADDITION
-                    sp.play(sound, vlm, vlm, 0, 0, 1);
             } else {
                 Toast.makeText(LogInActivity.this, R.string.plsconemail, Toast.LENGTH_SHORT).show();
                 final Animation animation = AnimationUtils.loadAnimation(this, R.anim.button_go);
                 v.startAnimation(animation);
-                if (sp != null)  //  ADDITION
-                    sp.play(sound, vlm, vlm, 0, 0, 1);
             }
+            if (sp != null)  //  ADDITION
+                sp.play(sound, vlm, vlm, 0, 0, 1);
+
+            //
+            //!Повторяющийся код вынесен из условной конструкции!
+            //
             // Practice addition - static analysis
             //
             //  Среда разработки предлагает вынести повторяющейся код из условной конструкции,
